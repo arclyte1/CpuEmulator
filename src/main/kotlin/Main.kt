@@ -7,9 +7,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.TextField
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -22,6 +21,7 @@ import controller.CpuController
 @Preview
 fun App() {
     val state by CpuController.screenState.collectAsState()
+    var executionDelay by remember { mutableStateOf(CpuController.executionDelay) }
 
     MaterialTheme {
         Column {
@@ -62,6 +62,22 @@ fun App() {
                 Button(onClick = { CpuController.next() }) {
                     Text("Next")
                 }
+                Button(onClick = { CpuController.resume() }) {
+                    Text("Resume")
+                }
+                Button(onClick = { CpuController.pause() }) {
+                    Text("Pause")
+                }
+                TextField(
+                    value = executionDelay.toString(),
+                    onValueChange = {
+                        runCatching {
+                            val converted = it.toLong()
+                            CpuController.setExecutionDelay(converted)
+                            executionDelay = converted
+                        }
+                    }
+                )
             }
         }
     }

@@ -18,12 +18,12 @@ class Cpu {
     var flag = 0b0_0_0u
     var pc = 0u
     val reg = UIntArray(16)
-    val commandRAM: Array<Command> = Array(1024) { Command(0u) }
+    val commandRAM = UIntArray(1024)
     val dataRAM = UIntArray(1024)
 
     fun loadProgram(program: UIntArray, data: UIntArray) {
         program.forEachIndexed { index, command ->
-            commandRAM[index] = Command(command)
+            commandRAM[index] = command
         }
         data.forEachIndexed { index, value ->
             dataRAM[index] = value
@@ -31,7 +31,7 @@ class Cpu {
     }
 
     fun executeCommand() {
-        val cmd = commandRAM[pc]
+        val cmd = Command(commandRAM[pc])
         when (cmd.instruction) {
             Instruction.MOV -> {
                 reg[cmd.secondOperand] = reg[cmd.firstOperand]
@@ -93,8 +93,7 @@ class Cpu {
             }
 
             Instruction.ATH -> {
-                val arithmeticInstruction = ArithmeticInstruction.entries.first { it.code == cmd.literal }
-                when(arithmeticInstruction) {
+                when(ArithmeticInstruction.values().first { it.code == cmd.literal }) {
                     ArithmeticInstruction.ADD -> reg[cmd.secondOperand] += reg[cmd.firstOperand]
                     ArithmeticInstruction.SUB -> reg[cmd.secondOperand] -= reg[cmd.firstOperand]
                     ArithmeticInstruction.MUL -> reg[cmd.secondOperand] *= reg[cmd.firstOperand]

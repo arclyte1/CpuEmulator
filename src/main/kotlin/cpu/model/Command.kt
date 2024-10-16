@@ -11,7 +11,7 @@ data class Command(
 ) {
 
     constructor(code: UInt) : this(
-        instruction = Instruction.entries.first { it.code == code.getBits(28, 31) },
+        instruction = Instruction.values().first { it.code == code.getBits(28, 31) },
         literal = code.getBits(8, 27),
         firstOperand = code.getBits(4, 7),
         secondOperand = code.getBits(0, 3),
