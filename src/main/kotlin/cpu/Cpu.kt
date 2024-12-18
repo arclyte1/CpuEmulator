@@ -2,6 +2,8 @@
 
 package cpu
 
+import assembler.Assembler
+import assembler.AssemblerCommand
 import cpu.model.ArithmeticInstruction
 import cpu.model.Command
 import cpu.model.Instruction
@@ -14,20 +16,23 @@ import shr
 class Cpu {
 
     val output = mutableListOf<String>()
+    var assemblerCommands = listOf<AssemblerCommand>()
 
     var flag = 0b0_0_0u
     var pc = 0u
     val reg = UIntArray(16)
     val commandRAM = UIntArray(1024)
-    val dataRAM = UIntArray(1024)
+    val dataRAM = UIntArray(DATA_RAM_SIZE)
 
-    fun loadProgram(program: UIntArray, data: UIntArray) {
-        program.forEachIndexed { index, command ->
+    fun loadProgram(program: String) {
+        val parseResult = Assembler.parseProgram(program)
+        parseResult.program.forEachIndexed { index, command ->
             commandRAM[index] = command
         }
-        data.forEachIndexed { index, value ->
+        parseResult.data.forEachIndexed { index, value ->
             dataRAM[index] = value
         }
+        assemblerCommands = parseResult.commands
     }
 
     fun executeCommand() {
@@ -117,5 +122,10 @@ class Cpu {
                 pc++
             }
         }
+    }
+
+    companion object {
+
+        const val DATA_RAM_SIZE = 1024
     }
 }

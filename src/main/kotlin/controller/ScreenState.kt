@@ -1,5 +1,7 @@
 package controller
 
+import assembler.AssemblerCommand
+
 
 data class ScreenState(
     val generalRegisters: List<Register> = emptyList(),
@@ -16,7 +18,7 @@ data class Register(
 )
 
 data class Command(
-    val index: Int,
-    val hexValue: String,
+    val index: Int?,
+    val assemblerCommand: AssemblerCommand,
     val isCurrent: Boolean,
 )
